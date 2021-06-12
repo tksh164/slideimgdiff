@@ -13,7 +13,7 @@ namespace libppexport
                 inputImage1 = new Mat(inputImageFilePath1, ImreadModes.Color);
                 inputImage2 = new Mat(inputImageFilePath2, ImreadModes.Color);
 
-                var diffRects = GetDiffRects(inputImage1, inputImage2);
+                var diffRects = FindDiffRects(inputImage1, inputImage2);
 
                 diffRectDrewImage1 = CreateDiffRectDrewImage(inputImage1, diffRects);
                 diffRectDrewImage2 = CreateDiffRectDrewImage(inputImage2, diffRects);
@@ -30,7 +30,7 @@ namespace libppexport
             }
         }
 
-        private static Rect[] GetDiffRects(Mat image1, Mat image2)
+        private static Rect[] FindDiffRects(Mat image1, Mat image2)
         {
             Point[][] countours;
             using (var absDiffImage = CreateAbsDiffImage(image1, image2))                                          // Create an abs diff image.
