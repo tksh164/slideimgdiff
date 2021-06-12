@@ -6,21 +6,12 @@ namespace libppexport
     {
         public static void SaveDifferenceImage(string inputImageFilePath1, string outputImageFilePath1, string inputImageFilePath2, string outputImageFilePath2)
         {
-            Mat inputImage1 = null, inputImage2 = null;
-            try
+            using (var inputImage1 = new Mat(inputImageFilePath1, ImreadModes.Color))
+            using (var inputImage2 = new Mat(inputImageFilePath2, ImreadModes.Color))
             {
-                inputImage1 = new Mat(inputImageFilePath1, ImreadModes.Color);
-                inputImage2 = new Mat(inputImageFilePath2, ImreadModes.Color);
-
                 DrawDiffContours(inputImage1, inputImage2);
-
                 inputImage1.SaveImage(outputImageFilePath1);
                 inputImage2.SaveImage(outputImageFilePath2);
-            }
-            finally
-            {
-                inputImage1?.Dispose();
-                inputImage2?.Dispose();
             }
         }
 
