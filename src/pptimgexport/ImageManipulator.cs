@@ -4,7 +4,7 @@ namespace libppexport
 {
     public class ImageManipulator
     {
-        public static void SaveDifferenceImage(string inputImageFilePath1, string outputImageFilePath1, string inputImageFilePath2, string outputImageFilePath2)
+        public static void SaveDiffDrawnImage(string inputImageFilePath1, string outputImageFilePath1, string inputImageFilePath2, string outputImageFilePath2)
         {
             using (var inputImage1 = new Mat(inputImageFilePath1, ImreadModes.Color))
             using (var inputImage2 = new Mat(inputImageFilePath2, ImreadModes.Color))
