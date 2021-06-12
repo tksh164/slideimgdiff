@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Office.Core;
-using PowerPoint = Microsoft.Office.Interop.PowerPoint;
+using PP = Microsoft.Office.Interop.PowerPoint;
 
 namespace libppexport
 {
@@ -15,11 +15,11 @@ namespace libppexport
 
         private static void SaveCopyAsPng(string powerPointFileFullPath, string outputFolderFullPath)
         {
-            var ppApp = new PowerPoint.Application();
+            var ppApp = new PP.Application();
             try
             {
                 var slide = ppApp.Presentations.Open(powerPointFileFullPath, MsoTriState.msoTrue, MsoTriState.msoFalse, MsoTriState.msoFalse);
-                slide.SaveCopyAs(outputFolderFullPath, PowerPoint.PpSaveAsFileType.ppSaveAsPNG, MsoTriState.msoTriStateMixed);
+                slide.SaveCopyAs(outputFolderFullPath, PP.PpSaveAsFileType.ppSaveAsPNG, MsoTriState.msoTriStateMixed);
                 slide.Close();
             }
             finally
