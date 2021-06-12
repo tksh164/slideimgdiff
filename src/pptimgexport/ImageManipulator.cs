@@ -4,16 +4,29 @@ namespace libppexport
 {
     public class ImageManipulator
     {
-        public static void SaveDifferenceImage(string inputImageFilePath1, string inputImageFilePath2, string diffImageFilePath)
+        public static void SaveDifferenceImage(string inputImageFilePath1, string outputImageFilePath1, string inputImageFilePath2, string outputImageFilePath2)
         {
-            using (var srcImage1 = new Mat(inputImageFilePath1, ImreadModes.Color))
-            using (var srcImage2 = new Mat(inputImageFilePath2, ImreadModes.Color))
+            Mat inputImage1 = null, inputImage2 = null;
+            Mat diffRectDrewImage1 = null, diffRectDrewImage2 = null;
+            try
             {
-                var diffRects = GetDiffRects(srcImage1, srcImage2);
-                using (var diffRectImage = CreateDiffRectImage(srcImage1.Size(), diffRects))
-                {
-                    diffRectImage.SaveImage(diffImageFilePath);
-                }
+                inputImage1 = new Mat(inputImageFilePath1, ImreadModes.Color);
+                inputImage2 = new Mat(inputImageFilePath2, ImreadModes.Color);
+
+                var diffRects = GetDiffRects(inputImage1, inputImage2);
+
+                diffRectDrewImage1 = CreateDiffRectDrewImage(inputImage1, diffRects);
+                diffRectDrewImage2 = CreateDiffRectDrewImage(inputImage2, diffRects);
+
+                diffRectDrewImage1.SaveImage(outputImageFilePath1);
+                diffRectDrewImage2.SaveImage(outputImageFilePath2);
+            }
+            finally
+            {
+                inputImage1?.Dispose();
+                inputImage2?.Dispose();
+                diffRectDrewImage1?.Dispose();
+                diffRectDrewImage2?.Dispose();
             }
         }
 
@@ -45,14 +58,15 @@ namespace libppexport
             return diffImage;
         }
 
-        private static Mat CreateDiffRectImage(Size imageSize, Rect[] diffRects)
+        private static Mat CreateDiffRectDrewImage(Mat image, Rect[] diffRects)
         {
-            var diffRectImage = new Mat(imageSize, MatType.CV_8UC3);
+            var diffRectDrewImage = new Mat(image.Size(), MatType.CV_8UC3);
+            image.CopyTo(diffRectDrewImage);
             for (int i = 0; i < diffRects.Length; i++)
             {
-                diffRectImage.Rectangle(diffRects[i], new Scalar(0, 255, 0), -1, LineTypes.AntiAlias, 0);
+                diffRectDrewImage.Rectangle(diffRects[i], new Scalar(0, 255, 0), -1, LineTypes.AntiAlias, 0);
             }
-            return diffRectImage;
+            return diffRectDrewImage;
         }
     }
 }
