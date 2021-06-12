@@ -62,9 +62,10 @@ namespace libppexport
         {
             var diffRectDrewImage = new Mat(image.Size(), MatType.CV_8UC3);
             image.CopyTo(diffRectDrewImage);
+            var rectColor = new Scalar(0, 255, 0);
             for (int i = 0; i < diffRects.Length; i++)
             {
-                diffRectDrewImage.Rectangle(diffRects[i], new Scalar(0, 255, 0), -1, LineTypes.AntiAlias, 0);
+                diffRectDrewImage.Rectangle(diffRects[i], rectColor, Cv2.FILLED, LineTypes.AntiAlias);
             }
             return diffRectDrewImage;
         }
