@@ -20,13 +20,13 @@ namespace libppexport
             using (var inputImage1 = new Mat(inputImageFilePath1, ImreadModes.Color))
             using (var inputImage2 = new Mat(inputImageFilePath2, ImreadModes.Color))
             {
-                DrawDiffContours(inputImage1, inputImage2);
+                DrawDiffArea(inputImage1, inputImage2);
                 inputImage1.SaveImage(outputImageFilePath1);
                 inputImage2.SaveImage(outputImageFilePath2);
             }
         }
 
-        private void DrawDiffContours(Mat image1, Mat image2)
+        private void DrawDiffArea(Mat image1, Mat image2)
         {
             Point[][] contours;
 
