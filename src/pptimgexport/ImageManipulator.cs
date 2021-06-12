@@ -32,11 +32,11 @@ namespace libppexport
 
             // Create an abs diff image.
             using (var absDiffImage = CreateAbsDiffImage(image1, image2))
-            // Convert to grayscale image.
+            // Convert to a grayscale image.
             using (var grayscaleImage = absDiffImage.CvtColor(ColorConversionCodes.RGB2GRAY))
             // Expand the diff contours by blur.
             using (var blurImage = grayscaleImage.Blur(new Size(BlurSize.Width, BlurSize.Height), new Point(-1, -1), BorderTypes.Default))
-            // Convert to black and white image.
+            // Convert to a black and white image.
             using (var binImage = blurImage.Threshold(1, 255, ThresholdTypes.Binary))
             {
                 binImage.FindContours(out contours, out _, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
