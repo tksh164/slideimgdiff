@@ -43,9 +43,9 @@ namespace libppexport
             }
 
             const int DrawAllContour = -1;
-            var contourColor = new Scalar(FillColor.R, FillColor.G, FillColor.B);
-            Cv2.DrawContours(image1, contours, DrawAllContour, contourColor, Cv2.FILLED, LineTypes.AntiAlias);
-            Cv2.DrawContours(image2, contours, DrawAllContour, contourColor, Cv2.FILLED, LineTypes.AntiAlias);
+            var contourFillColor = new Scalar(FillColor.R, FillColor.G, FillColor.B);
+            Cv2.DrawContours(image1, contours, DrawAllContour, contourFillColor, Cv2.FILLED, LineTypes.AntiAlias);
+            Cv2.DrawContours(image2, contours, DrawAllContour, contourFillColor, Cv2.FILLED, LineTypes.AntiAlias);
         }
 
         private static Mat CreateAbsDiffImage(Mat image1, Mat image2)
