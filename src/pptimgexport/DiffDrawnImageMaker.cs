@@ -3,13 +3,13 @@ using D = System.Drawing;
 
 namespace libppexport
 {
-    public class ImageManipulator
+    public class DiffDrawnImageMaker
     {
         public D.Size BlurSize { get; set; }
 
         public D.Color FillColor { get; set; }
 
-        public ImageManipulator()
+        public DiffDrawnImageMaker()
         {
             BlurSize = new D.Size(15, 15);
             FillColor = D.Color.FromArgb(0, 255, 0);
