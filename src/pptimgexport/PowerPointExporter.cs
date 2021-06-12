@@ -9,6 +9,12 @@ namespace libppexport
     {
         public static void ExportAsPng(string powerPointFileFullPath, string outputFolderFullPath)
         {
+            SaveCopyAsPng(powerPointFileFullPath, outputFolderFullPath);
+            RenameSavedFiles(outputFolderFullPath);
+        }
+
+        private static void SaveCopyAsPng(string powerPointFileFullPath, string outputFolderFullPath)
+        {
             var ppApp = new PowerPoint.Application();
             try
             {
@@ -20,7 +26,10 @@ namespace libppexport
             {
                 ppApp.Quit();
             }
+        }
 
+        private static void RenameSavedFiles(string outputFolderFullPath)
+        {
             var regex = new Regex(@"^slide(?<num>[0-9]+)\.png$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
             var options = new EnumerationOptions
             {
