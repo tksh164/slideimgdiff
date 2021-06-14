@@ -7,10 +7,10 @@ namespace libppexport
 {
     public class PowerPointExporter
     {
-        public static void ExportAsPng(string powerPointFileFullPath, string outputFolderFullPath)
+        public static void ExportAsPng(string powerPointFileFullPath, string outputFolderFullPath, string fileNamePattern = "slide{0:0000}.png")
         {
             SaveCopyAsPng(powerPointFileFullPath, outputFolderFullPath);
-            RenameSavedFiles(outputFolderFullPath);
+            RenameSavedFiles(outputFolderFullPath, fileNamePattern);
         }
 
         private static void SaveCopyAsPng(string powerPointFileFullPath, string outputFolderFullPath)
@@ -28,7 +28,7 @@ namespace libppexport
             }
         }
 
-        private static void RenameSavedFiles(string outputFolderFullPath)
+        private static void RenameSavedFiles(string outputFolderFullPath, string fileNamePattern)
         {
             var regex = new Regex(@"^slide(?<num>[0-9]+)\.png$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
             var options = new EnumerationOptions
@@ -43,7 +43,7 @@ namespace libppexport
             {
                 var match = regex.Match(Path.GetFileName(filePath));
                 var num = uint.Parse(match.Groups["num"].Value);
-                var newFilePath = Path.Combine(Path.GetDirectoryName(filePath), string.Format("s{0:0000}.png", num));
+                var newFilePath = Path.Combine(Path.GetDirectoryName(filePath), string.Format(fileNamePattern, num));
                 File.Move(filePath, newFilePath, true);
             }
         }
