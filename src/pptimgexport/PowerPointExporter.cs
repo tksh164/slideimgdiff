@@ -1,26 +1,35 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Office.Core;
-using PowerPoint = Microsoft.Office.Interop.PowerPoint;
+using PP = Microsoft.Office.Interop.PowerPoint;
 
 namespace libppexport
 {
     public class PowerPointExporter
     {
-        public static void ExportAsPng(string powerPointFileFullPath, string outputFolderFullPath)
+        public static void ExportAsPng(string powerPointFileFullPath, string outputFolderFullPath, string fileNamePattern = "slide{0:0000}.png")
         {
-            var ppApp = new PowerPoint.Application();
+            SaveCopyAsPng(powerPointFileFullPath, outputFolderFullPath);
+            RenameSavedFiles(outputFolderFullPath, fileNamePattern);
+        }
+
+        private static void SaveCopyAsPng(string powerPointFileFullPath, string outputFolderFullPath)
+        {
+            var ppApp = new PP.Application();
             try
             {
                 var slide = ppApp.Presentations.Open(powerPointFileFullPath, MsoTriState.msoTrue, MsoTriState.msoFalse, MsoTriState.msoFalse);
-                slide.SaveCopyAs(outputFolderFullPath, PowerPoint.PpSaveAsFileType.ppSaveAsPNG, MsoTriState.msoTriStateMixed);
+                slide.SaveCopyAs(outputFolderFullPath, PP.PpSaveAsFileType.ppSaveAsPNG, MsoTriState.msoTriStateMixed);
                 slide.Close();
             }
             finally
             {
                 ppApp.Quit();
             }
+        }
 
+        private static void RenameSavedFiles(string outputFolderFullPath, string fileNamePattern)
+        {
             var regex = new Regex(@"^slide(?<num>[0-9]+)\.png$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
             var options = new EnumerationOptions
             {
@@ -34,7 +43,7 @@ namespace libppexport
             {
                 var match = regex.Match(Path.GetFileName(filePath));
                 var num = uint.Parse(match.Groups["num"].Value);
-                var newFilePath = Path.Combine(Path.GetDirectoryName(filePath), string.Format("s{0:0000}.png", num));
+                var newFilePath = Path.Combine(Path.GetDirectoryName(filePath), string.Format(fileNamePattern, num));
                 File.Move(filePath, newFilePath, true);
             }
         }
