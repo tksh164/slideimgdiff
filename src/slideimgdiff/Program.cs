@@ -16,44 +16,59 @@ namespace ppimgdiff
                 Console.WriteLine("Usage: ppimgdiff.exe PpFilePath1 PpFilePath2");
                 return;
             }
-            var ppFilePath1 = args[0];
-            var ppFilePath2 = args[1];
+            var ppFilePair = new PathPair(args[0], args[1]);
+
+            // Create the output folder structure.
+            const string SubfolderNameOriginalImage = "orig";
+            const string SubfolderNameDiffImage = "diff";
+            const string SubfolderNameAddedImage = "added";
+            var subfolderNames = new string[] { SubfolderNameOriginalImage, SubfolderNameDiffImage, SubfolderNameAddedImage };
+            var outputFolderRootPathPair = new PathPair(
+                CreateOutputFolderStructure(ppFilePair.Path1, subfolderNames),
+                CreateOutputFolderStructure(ppFilePair.Path2, subfolderNames)
+            );
 
             // Export the PowerPoint slides as PNG file.
-            var exportFolderPath1 = CreatePngExportFolder(ppFilePath1);
-            var exportFolderPath2 = CreatePngExportFolder(ppFilePath2);
+            var exportFolderPathPair = new PathPair(
+                Path.Combine(outputFolderRootPathPair.Path1, SubfolderNameOriginalImage),
+                Path.Combine(outputFolderRootPathPair.Path2, SubfolderNameOriginalImage)
+            );
             var exportTasks = new Task[] {
-                Task.Run(() => { PowerPointExporter.ExportAsPng(ppFilePath1, exportFolderPath1, "s{0:0000}.png"); }),
-                Task.Run(() => { PowerPointExporter.ExportAsPng(ppFilePath2, exportFolderPath2, "s{0:0000}.png"); })
+                Task.Run(() => { PowerPointExporter.ExportAsPng(ppFilePair.Path1, exportFolderPathPair.Path1, "s{0:0000}.png"); }),
+                Task.Run(() => { PowerPointExporter.ExportAsPng(ppFilePair.Path2, exportFolderPathPair.Path2, "s{0:0000}.png"); })
             };
             Task.WaitAll(exportTasks);
 
-            var originalImgPathPairs = CreateFilePathPairs(exportFolderPath1, exportFolderPath2, "s????.png");
-            foreach (var originalImgPathPair in originalImgPathPairs)
+            var originalImagePathPairs = CreateFilePathPairs(exportFolderPathPair.Path1, exportFolderPathPair.Path2, "s????.png");
+            foreach (var originalImagePathPair in originalImagePathPairs)
             {
                 // Create the difference area drawn images with the slide1 and slide2.
-                var diffImgPathPair = CreateNewPathPairWithSuffix(originalImgPathPair, ".diff");
+                var diffImagePathPair = CreateNewPathPairWithDifferentSubfolder(originalImagePathPair, SubfolderNameDiffImage);
                 var options = new DiffDrawnImageOptions()
                 {
                     BlurSize = new Size(5, 5),
                     FillColor = Color.FromArgb(0, 255, 0),
                 };
-                DiffDrawnImageMaker.SaveDiffDrawnImage(originalImgPathPair.Path1, diffImgPathPair.Path1, originalImgPathPair.Path2, diffImgPathPair.Path2, options);
+                DiffDrawnImageMaker.SaveDiffDrawnImage(originalImagePathPair.Path1, diffImagePathPair.Path1, originalImagePathPair.Path2, diffImagePathPair.Path2, options);
 
                 // Create the weighted added images with the original and difference images.
-                var addedImgPathPair = CreateNewPathPairWithSuffix(originalImgPathPair, ".added");
-                var addedImgTasks = new Task[] {
-                    Task.Run(() => { AddedImageMaker.SaveAddedImage(originalImgPathPair.Path1, 0.6, diffImgPathPair.Path1, 0.4, addedImgPathPair.Path1); }),
-                    Task.Run(() => { AddedImageMaker.SaveAddedImage(originalImgPathPair.Path2, 0.6, diffImgPathPair.Path2, 0.4, addedImgPathPair.Path2); })
+                var addedImagePathPair = CreateNewPathPairWithDifferentSubfolder(originalImagePathPair, SubfolderNameAddedImage);
+                var addedImageTasks = new Task[] {
+                    Task.Run(() => { AddedImageMaker.SaveAddedImage(originalImagePathPair.Path1, 0.6, diffImagePathPair.Path1, 0.4, addedImagePathPair.Path1); }),
+                    Task.Run(() => { AddedImageMaker.SaveAddedImage(originalImagePathPair.Path2, 0.6, diffImagePathPair.Path2, 0.4, addedImagePathPair.Path2); })
                 };
-                Task.WaitAll(addedImgTasks);
+                Task.WaitAll(addedImageTasks);
             }
         }
 
-        private static string CreatePngExportFolder(string ppFilePath)
+        private static string CreateOutputFolderStructure(string ppFilePath, string[] subfolders)
         {
             var exportFolderPath = Path.Combine(Path.GetDirectoryName(ppFilePath), Path.GetFileNameWithoutExtension(ppFilePath));
             Directory.CreateDirectory(exportFolderPath);
+            foreach (var subfolder in subfolders)
+            {
+                Directory.CreateDirectory(Path.Combine(exportFolderPath, subfolder));
+            }
             return exportFolderPath;
         }
 
@@ -81,11 +96,13 @@ namespace ppimgdiff
             return pathPairs;
         }
 
-        private static PathPair CreateNewPathPairWithSuffix(PathPair pathPair, string suffix)
+        private static PathPair CreateNewPathPairWithDifferentSubfolder(PathPair pathPair, string subfolderName)
         {
+            var rootFolderPath1 = Path.GetDirectoryName(Path.GetDirectoryName(pathPair.Path1));
+            var rootFolderPath2 = Path.GetDirectoryName(Path.GetDirectoryName(pathPair.Path2));
             return new PathPair(
-                Path.Combine(Path.GetDirectoryName(pathPair.Path1), Path.GetFileNameWithoutExtension(pathPair.Path1) + suffix + Path.GetExtension(pathPair.Path1)),
-                Path.Combine(Path.GetDirectoryName(pathPair.Path2), Path.GetFileNameWithoutExtension(pathPair.Path2) + suffix + Path.GetExtension(pathPair.Path2))
+                Path.Combine(rootFolderPath1, subfolderName, Path.GetFileName(pathPair.Path1)),
+                Path.Combine(rootFolderPath2, subfolderName, Path.GetFileName(pathPair.Path2))
             );
         }
     }
