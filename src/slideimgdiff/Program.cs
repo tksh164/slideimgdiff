@@ -29,17 +29,17 @@ namespace ppimgdiff
             );
 
             // Export the PowerPoint slides as PNG file.
-            var exportFolderPathPair = new PathPair(
+            var originalImageExportFolderPathPair = new PathPair(
                 Path.Combine(outputFolderRootPathPair.Path1, SubfolderNameOriginalImage),
                 Path.Combine(outputFolderRootPathPair.Path2, SubfolderNameOriginalImage)
             );
             var exportTasks = new Task[] {
-                Task.Run(() => { PowerPointExporter.ExportAsPng(ppFilePair.Path1, exportFolderPathPair.Path1, "s{0:0000}.png"); }),
-                Task.Run(() => { PowerPointExporter.ExportAsPng(ppFilePair.Path2, exportFolderPathPair.Path2, "s{0:0000}.png"); })
+                Task.Run(() => { PowerPointExporter.ExportAsPng(ppFilePair.Path1, originalImageExportFolderPathPair.Path1, "s{0:0000}.png"); }),
+                Task.Run(() => { PowerPointExporter.ExportAsPng(ppFilePair.Path2, originalImageExportFolderPathPair.Path2, "s{0:0000}.png"); })
             };
             Task.WaitAll(exportTasks);
 
-            var originalImagePathPairs = CreateFilePathPairs(exportFolderPathPair.Path1, exportFolderPathPair.Path2, "s????.png");
+            var originalImagePathPairs = CreateFilePathPairs(originalImageExportFolderPathPair.Path1, originalImageExportFolderPathPair.Path2, "s????.png");
             foreach (var originalImagePathPair in originalImagePathPairs)
             {
                 // Create the difference area drawn images with the slide1 and slide2.
