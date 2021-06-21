@@ -55,7 +55,7 @@ namespace libppexport
 
         private static Mat CreateAbsDiffImage(Mat image1, Mat image2)
         {
-            var diffImage = new Mat(image1.Size(), MatType.CV_8UC3);
+            var diffImage = new Mat(image1.Size(), image1.Type());
             Cv2.Absdiff(image1, image2, diffImage);
             return diffImage;
         }
