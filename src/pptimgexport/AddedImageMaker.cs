@@ -16,7 +16,7 @@ namespace libppexport
 
         private static Mat CreateAddedImage(Mat image1, double weight1, Mat image2, double weight2)
         {
-            var addedImage = new Mat(image1.Size(), MatType.CV_8UC3);
+            var addedImage = new Mat(image1.Size(), image1.Type());
             Cv2.AddWeighted(image1, weight1, image2, weight2, 0, addedImage);
             return addedImage;
         }

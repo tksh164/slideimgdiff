@@ -47,15 +47,15 @@ namespace libppexport
                 binImage.FindContours(out contours, out _, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
             }
 
-            const int DrawAllContour = -1;
+            const int DrawAllContours = -1;
             var contourFillColor = new Scalar(options.FillColor.B, options.FillColor.G, options.FillColor.R);
-            Cv2.DrawContours(image1, contours, DrawAllContour, contourFillColor, Cv2.FILLED, LineTypes.AntiAlias);
-            Cv2.DrawContours(image2, contours, DrawAllContour, contourFillColor, Cv2.FILLED, LineTypes.AntiAlias);
+            Cv2.DrawContours(image1, contours, DrawAllContours, contourFillColor, Cv2.FILLED, LineTypes.AntiAlias);
+            Cv2.DrawContours(image2, contours, DrawAllContours, contourFillColor, Cv2.FILLED, LineTypes.AntiAlias);
         }
 
         private static Mat CreateAbsDiffImage(Mat image1, Mat image2)
         {
-            var diffImage = new Mat(image1.Size(), MatType.CV_8UC3);
+            var diffImage = new Mat(image1.Size(), image1.Type());
             Cv2.Absdiff(image1, image2, diffImage);
             return diffImage;
         }
