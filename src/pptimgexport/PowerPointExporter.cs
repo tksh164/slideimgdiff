@@ -7,10 +7,10 @@ namespace libppexport
 {
     public class PowerPointExporter
     {
-        public static void ExportAsPng(string powerPointFileFullPath, string outputFolderFullPath, string fileNamePattern = "slide{0:0000}.png")
+        public static void ExportAsPng(string powerPointFileFullPath, string exportFolderFullPath, string fileNamePattern = "slide{0:0000}.png")
         {
-            SaveCopyAsPng(powerPointFileFullPath, outputFolderFullPath);
-            RenameSavedFiles(outputFolderFullPath, fileNamePattern);
+            SaveCopyAsPng(powerPointFileFullPath, exportFolderFullPath);
+            RenameSavedFiles(exportFolderFullPath, fileNamePattern);
         }
 
         private static void SaveCopyAsPng(string powerPointFileFullPath, string outputFolderFullPath)
