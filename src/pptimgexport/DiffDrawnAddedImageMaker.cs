@@ -5,30 +5,30 @@ namespace libppexport
 {
     public static class DiffDrawnAddedImageMaker
     {
-        public static void SaveDiffDrawnAddedImage(string inputImageFilePath1, string outputImageFilePath1, string inputImageFilePath2, string outputImageFilePath2, double inputImageWeight, DiffDrawnImageOptions options = null)
+        public static void SaveDiffDrawnAddedImage(string sourceImageFilePath1, string resultImageFilePath1, string sourceImageFilePath2, string resultImageFilePath2, double sourceImageWeight, DiffDrawnImageOptions options = null)
         {
             if (options == null) options = new DiffDrawnImageOptions();
 
-            using (var inputImage1 = new Mat(inputImageFilePath1, ImreadModes.Color))
-            using (var inputImage2 = new Mat(inputImageFilePath2, ImreadModes.Color))
-            using (var diffDrawnImage1 = new Mat(inputImage1.Size(), inputImage1.Type()))
-            using (var diffDrawnImage2 = new Mat(inputImage2.Size(), inputImage2.Type()))
+            using (var sourceImage1 = new Mat(sourceImageFilePath1, ImreadModes.Color))
+            using (var sourceImage2 = new Mat(sourceImageFilePath2, ImreadModes.Color))
+            using (var diffDrawnImage1 = new Mat(sourceImage1.Size(), sourceImage1.Type()))
+            using (var diffDrawnImage2 = new Mat(sourceImage2.Size(), sourceImage2.Type()))
             {
                 Task.WaitAll(new Task[] {
-                    Task.Run(() => { inputImage1.CopyTo(diffDrawnImage1); }),
-                    Task.Run(() => { inputImage2.CopyTo(diffDrawnImage2); })
+                    Task.Run(() => { sourceImage1.CopyTo(diffDrawnImage1); }),
+                    Task.Run(() => { sourceImage2.CopyTo(diffDrawnImage2); })
                 });
 
                 DrawDiffArea(diffDrawnImage1, diffDrawnImage2, options);
 
                 Task.WaitAll(new Task[] {
                     Task.Run(() => {
-                        AddImageWithWeight(inputImage1, inputImageWeight, diffDrawnImage1);
-                        inputImage1.SaveImage(outputImageFilePath1);
+                        AddImageWithWeight(sourceImage1, sourceImageWeight, diffDrawnImage1);
+                        sourceImage1.SaveImage(resultImageFilePath1);
                     }),
                     Task.Run(() => {
-                        AddImageWithWeight(inputImage2, inputImageWeight, diffDrawnImage2);
-                        inputImage2.SaveImage(outputImageFilePath2);
+                        AddImageWithWeight(sourceImage2, sourceImageWeight, diffDrawnImage2);
+                        sourceImage2.SaveImage(resultImageFilePath2);
                     })
                 });
             }
