@@ -5,29 +5,26 @@ namespace ppimgdiff
     internal class PathContext
     {
         public string InputFilePath { get; protected set; }
-        public string RootOutputFolderPath { get; protected set; }
-        public string OriginalImageOutputFolderPath { get; protected set; }
-        public string DiffImageOutputFolderPath { get; protected set; }
-        public string AddedImageOutputFolderPath { get; protected set; }
+        public string RootWorkFolderPath { get; protected set; }
+        public string SourceImageFolderPath { get; protected set; }
+        public string ResultImageFolderPath { get; protected set; }
 
         public PathContext(string inputPpFilePath)
         {
             InputFilePath = inputPpFilePath;
-            RootOutputFolderPath = GetRootOutputFolderPath(inputPpFilePath);
-            OriginalImageOutputFolderPath = Path.Combine(RootOutputFolderPath, "orig");
-            DiffImageOutputFolderPath = Path.Combine(RootOutputFolderPath, "diff");
-            AddedImageOutputFolderPath = Path.Combine(RootOutputFolderPath, "added");
+            RootWorkFolderPath = GetRootWorkFolderPath(inputPpFilePath);
+            SourceImageFolderPath = Path.Combine(RootWorkFolderPath, "source");
+            ResultImageFolderPath = Path.Combine(RootWorkFolderPath, "result");
         }
 
-        public void CreateOutputFolders()
+        public void CreateWorkFolders()
         {
-            Directory.CreateDirectory(RootOutputFolderPath);
-            Directory.CreateDirectory(OriginalImageOutputFolderPath);
-            Directory.CreateDirectory(DiffImageOutputFolderPath);
-            Directory.CreateDirectory(AddedImageOutputFolderPath);
+            Directory.CreateDirectory(RootWorkFolderPath);
+            Directory.CreateDirectory(SourceImageFolderPath);
+            Directory.CreateDirectory(ResultImageFolderPath);
         }
 
-        private static string GetRootOutputFolderPath(string inputFilePath)
+        private static string GetRootWorkFolderPath(string inputFilePath)
         { 
             return Path.Combine(Path.GetDirectoryName(inputFilePath), Path.GetFileNameWithoutExtension(inputFilePath));
         }
